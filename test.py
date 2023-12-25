@@ -33,11 +33,10 @@ class RC4:
         return self.state[(self.state[self.x] + self.state[self.y]) % 256]
 
 # Function to encrypt an image using RC4
-def encrypt_image(image_path, key):
+def encrypt_image(img_path, key):
     # Load the image and convert it to grayscale
-    img = Image.open(image_path).convert('L')
+    img=Image.open(img_path)
     img_data = np.array(img)
-
     # Flatten the image array and convert to bytes
     flat_img_data = img_data.flatten()
     byte_data = bytes(flat_img_data)
@@ -59,36 +58,16 @@ def encrypt_image(image_path, key):
 
 root_path=os.path.abspath(os.path.join(os.getcwd(), ".."))
 pic_path=os.path.join(root_path,"picture")
-original_image_path = pic_path+"\\7.jpg"
+original_image_path = pic_path+"\\7_dec.png"
 key = b'secret_key'  # Update this key
 
 # Encrypt the image
+# input_img = Image.open(original_image_path).convert('L')
+# input_img.save("7_ori.png")
 encrypted_image = encrypt_image(original_image_path, key)
 
 # Display the original and encrypted images
-original_image = Image.open(original_image_path).convert('L')
-original_image.show(title="Original Image")
+
+# original_image.show(title="Original Image")
 encrypted_image.show(title="Encrypted Image")
-
-
-# # Example usage
-# root_path=os.path.abspath(os.path.join(os.getcwd(), ".."))
-# pic_path=os.path.join(root_path,"picture")
-
-
-# encryption_key = b'\x08\xfa\x06\xc6\xdd\xbd\xa4\x80'
-# original_image_path = pic_path+"\\7.jpg"
-# additional_data = '12345678'
-
-# # Encrypt the original image
-# encrypted_image_path = encrypt_image(original_image_path, encryption_key)
-
-
-# """
-# # Embed data into the encrypted image
-# embedded_image_path = embed_data(encrypted_image_path, encryption_key, additional_data)
-
-# # Decrypt the embedded image
-# decrypted_image_path = decrypt_image(embedded_image_path, encryption_key)
-# print(f"Decrypted image saved as: {decrypted_image_path}")
-# """
+encrypted_image.save("7_enc.png")
