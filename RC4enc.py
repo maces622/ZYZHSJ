@@ -1,4 +1,3 @@
-import imp
 from logging import root
 import numpy as np
 from PIL import Image
