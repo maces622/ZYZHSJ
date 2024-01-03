@@ -1,12 +1,7 @@
-from logging import root
 import numpy as np
 from PIL import Image
 import os
 
-from PIL import Image
-import numpy as np
-
-# RC4 encryption algorithm
 class RC4:
     def __init__(self, key=None):
         self.state = list(range(256))  # Initialize state array
@@ -32,7 +27,7 @@ class RC4:
         return self.state[(self.state[self.x] + self.state[self.y]) % 256]
     def get_key(self):
         return self.state
-# Function to encrypt an image using RC4
+# 枚举密钥
 def encrypt_image(img_path, key):
     # Load the image and convert it to grayscale
     # img=Image.open(img_path)
@@ -53,21 +48,32 @@ def encrypt_image(img_path, key):
     # Create an encrypted image from the data
     encrypted_img = Image.fromarray(encrypted_img_data)
     return encrypted_img
+testnum=0
+root_path=os.path.abspath(os.path.join(os.getcwd(), "."))
+for key in range(1,256):
+    testnum=testnum+1
+    code_num = 0
+    irt_str1 = ''
+    pin=0
+    sk="secret_key"
+    rc4=RC4(sk.encode('utf-8'))
+    rc4_key=rc4.get_key()
+    while(code_num != 2304):
 
-
-root_path=os.path.abspath(os.path.join(os.getcwd(), ".."))
-pic_path=os.path.join(root_path,"gray_pic")
-enc_path=os.path.join(root_path,"enc_pic")
-files=os.listdir(pic_path)
-key = b'secret_key'  # Update this key
-
-for file in files:
-    original_image_path=os.path.join(pic_path,file)
-    # print(file_name)
-    img=Image.open(original_image_path)
-    enc_img=encrypt_image(img,key)
-    enc_img.save(os.path.join(enc_path,file))
-
-
-# encrypted_image = encrypt_image(original_image_path, key)
-# encrypted_image.show(title="Encrypted Image")
+        content1 = rc4_key[pin]
+        s = "".join(f"{content1:08b}")
+        irt_str1 = irt_str1 + s
+        code_num = code_num + 1
+# 生成s0s1举证
+    irt_count = 0
+    irt_num =np.zeros((144,128)) #irt_num 表初始矩阵
+    for i in range(144):
+        for j in range(128):
+            irt_num[i][j] = irt_str1[irt_count]
+            irt_count = irt_count + 1
+    pic_path=os.path.join(root_path,"7_enc.png")
+    img=Image.open(pic_path)
+    dec_img=encrypt_image(img,sk.encode('utf-8'))
+    dec_img.save(str(testnum)+".png")
+    break
+    
