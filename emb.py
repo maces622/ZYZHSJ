@@ -4,6 +4,25 @@ from PIL import Image
 import copy
 
 
+def fi_th(m):
+    bin_point = bin(m)
+    int_point = int(bin_point,2)#2进制转为10进制整数
+    #因为bin()函数转换2进制不固定位数，所以使用s = "".join(f"{num:08b}")指定生成8位，但是int(s)无法转换成对应十进制，故只用s判定取反的加减操作
+
+    s = "".join(f"{int_point:08b}")
+    if(s[5] == '1'):
+        int_point = int_point - 4
+    else: int_point = int_point + 4
+
+    if(s[6] == '1'):
+        int_point = int_point - 2
+    else: int_point = int_point + 2
+
+    if(s[7] == '1'):
+        int_point = int_point - 1
+    else: int_point = int_point + 1
+
+    return int_point
 class RC4:
     def __init__(self, key=None):
         self.state = list(range(256))  # Initialize state array
@@ -25,19 +44,22 @@ class RC4:
         return self.state[(self.state[self.x] + self.state[self.y]) % 256]
 
 
-def cal_v(fig,x,y,lx,ly):
-    ret_v=0;
-    for i in range(x+1,lx+x):
-        for j in range(y+1,ly+y):
-            temp=fig[i,j]-(1/4)*(fig[i-1,j]+fig[i,j-1]+fig[i+1,j]+fig[i,j+1])
-            ret_v=abs(ret_v+temp)
-    return ret_v
 
 """
 大小 768*768 32*32为一个block
 一共12*12个block 可以嵌入144位
 """
+
+block_size=8
+len_of_info=int(768/block_size)*int(768/block_size)
+len_of_block=int(768/block_size)
+emb_info=[]
+for i in range(len_of_info):
+    emb_info.append(i%2)
+
+
 image = cv2.imread('611_dec.png', cv2.IMREAD_GRAYSCALE) # type: ignore
+
 #init rc4 key stream
 rc4=RC4(b'115')
 s0s1_mt=np.empty((768,768))
@@ -45,32 +67,26 @@ for i in range(0,768):
     for j in range(0,768):
         s0s1_mt[i][j]=int(rc4.prga()%2)
 
-"""只需要在此处设置您的嵌入信息即可，最长不超过144位"""
-emb_info=[1,0,1,0,1,0,0,1,1,1,1,0,
-          1,1,0,0,0,1,0,1,0,0,0,1]
-
-len_of_info=len(emb_info)
-# print(image[0:100,0:100])
 
 for x in range(len_of_info):
-    hang=int(x/24)
-    lie=x%24
-    for i in range(32): 
-        for j in range(32):
-            p1=hang*32+i
-            p2=lie*32+j
+    hang=int(x/len_of_block)
+    lie=x%len_of_block
+    for i in range(block_size): 
+        for j in range(block_size):
+            p1=hang*block_size+i
+            p2=lie*block_size+j
             if(emb_info[x]==1):
-                if s0s1_mt[p1][p2]==1.0:
-                    image[p1,p2]=image[p1,p2]^7
+                if s0s1_mt[p1][p2]==1:
+                    image[p1,p2]=fi_th(image[p1,p2])
                 else: 
                     continue
             else:
-                if s0s1_mt[p1][p2]==1.0:
+                if s0s1_mt[p1][p2]==1:
                     continue
                 else:
-                    image[p1,p2]=image[p1,p2]^7
+                    image[p1,p2]=fi_th(image[p1,p2])
 # print(image[0:100,0:100])
-image = Image.fromarray(image).convert('L')
+image = Image.fromarray(image)
 image.show()
 image.save("611_emb.png")
 
