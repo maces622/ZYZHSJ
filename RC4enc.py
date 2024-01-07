@@ -59,7 +59,7 @@ root_path=os.path.abspath(os.path.join(os.getcwd(), ".."))
 pic_path=os.path.join(root_path,"gray_pic")
 enc_path=os.path.join(root_path,"enc_pic")
 files=os.listdir(pic_path)
-key = b'secret_key'  # Update this key
+key = b'115'  # Update this key
 
 for file in files:
     original_image_path=os.path.join(pic_path,file)

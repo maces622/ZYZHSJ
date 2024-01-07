@@ -4,7 +4,7 @@ from PIL import Image
 import os
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
-from .test import RC4
+from .round1 import RC4
 import copy
 def fi_th(m):
     bin_point = bin(m)

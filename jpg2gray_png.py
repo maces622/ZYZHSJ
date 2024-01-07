@@ -22,6 +22,7 @@ for file in files:
         try:
             with Image.open(original_image_path) as img:
                 gray_img = img.convert('L')
+                gray_img=gray_img.resize((384,384))
                 gray_img.save(os.path.join(gray_path,file_name+".png"))
         except Exception as e:
             print("无法打开",file_name)

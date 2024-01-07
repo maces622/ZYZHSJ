@@ -55,25 +55,26 @@ for key in range(1,256):
     code_num = 0
     irt_str1 = ''
     pin=0
-    sk="secret_key"
-    rc4=RC4(sk.encode('utf-8'))
+    sk=b'115'
+    rc4=RC4(sk)
     rc4_key=rc4.get_key()
+    print(rc4_key)
     while(code_num != 2304):
 
         content1 = rc4_key[pin]
         s = "".join(f"{content1:08b}")
         irt_str1 = irt_str1 + s
         code_num = code_num + 1
-# 生成s0s1举证
+# 生成s0s1矩阵
     irt_count = 0
     irt_num =np.zeros((144,128)) #irt_num 表初始矩阵
     for i in range(144):
         for j in range(128):
             irt_num[i][j] = irt_str1[irt_count]
             irt_count = irt_count + 1
-    pic_path=os.path.join(root_path,"7_enc.png")
+    pic_path=os.path.join(root_path,"4.png")
     img=Image.open(pic_path)
-    dec_img=encrypt_image(img,sk.encode('utf-8'))
+    dec_img=encrypt_image(img,sk)
     dec_img.save(str(testnum)+".png")
     break
     
