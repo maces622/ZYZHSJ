@@ -33,7 +33,7 @@ def cal_v(fig,x,y,lx,ly):
     ret_v=0;
     for i in range(x+1,lx+x):
         for j in range(y+1,ly+y):
-            temp=fig[i,j]-(1/4)*(fig[i-1,j]+fig[i,j-1]+fig[i+1,j]+fig[i,j+1])
+            temp=float(fig[i,j])-(1/4)*(float(fig[i-1,j])+float(fig[i,j-1])+float(fig[i+1,j])+float(fig[i,j+1]))
             ret_v=abs(ret_v+temp)
     return ret_v
 
