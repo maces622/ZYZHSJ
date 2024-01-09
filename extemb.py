@@ -2,6 +2,8 @@ import cv2
 import numpy as np
 from PIL import Image
 import copy
+import time
+start_time = time.time()
 
 def fi_th(m):
     bin_point = bin(m)
@@ -55,7 +57,7 @@ def cal_v(fig,x,y,lx,ly):
 大小 384*384 block_size*block_size为一个block
 一共12*12个block 可以嵌入144位
 """
-image = cv2.imread('611_emb.png', cv2.IMREAD_GRAYSCALE) # type: ignore
+image = cv2.imread('414_emb.png', cv2.IMREAD_GRAYSCALE) # type: ignore
 #init rc4 key stream
 rc4=RC4(b'115')
 s0s1_mt=np.empty((768,768))
@@ -66,7 +68,7 @@ for i in range(0,768):
 
 """只需要在此处设置您的嵌入信息即可，最长不超过144位"""
 
-block_size=8
+block_size=32
 len_of_info=int(768/block_size)*int(768/block_size)
 len_of_block=int(768/block_size)
 emb_info=[]
@@ -98,15 +100,29 @@ for x in range(len_of_info):
     else :
         # print(0)
         info.append(0)
-print("try:",info)
-print("ans:",emb_info)
+# print("try:",info)
+# print("ans:",emb_info)
+errorbj=copy.deepcopy(image[0:768,0:768])
 cnterr=0;
 for i in range(len_of_info):
     if(info[i]==emb_info[i]):
         continue
+    h=int(i/len_of_block)
+    l=i%len_of_block
+    for x1 in range(block_size):
+        for x2 in range(block_size):
+            errorbj[h*block_size+x1][l*block_size+x2]=0
     cnterr=cnterr+1
+
+errorbj = Image.fromarray(errorbj)
+errorbj.show()
+errorbj.save("fault.png")
+
 # image = Image.fromarray(image).convert('L')
 # image.show()
 # image.save("4_emb.png")
 print(float(cnterr)/float(len_of_info))
 
+end_time = time.time()
+elapsed_time = end_time - start_time
+print(f"Execution time: {elapsed_time} seconds")

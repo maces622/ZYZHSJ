@@ -50,7 +50,7 @@ class RC4:
 一共12*12个block 可以嵌入144位
 """
 
-block_size=8
+block_size=32
 len_of_info=int(768/block_size)*int(768/block_size)
 len_of_block=int(768/block_size)
 emb_info=[]
@@ -58,7 +58,7 @@ for i in range(len_of_info):
     emb_info.append(i%2)
 
 
-image = cv2.imread('611_dec.png', cv2.IMREAD_GRAYSCALE) # type: ignore
+image = cv2.imread('414.png', cv2.IMREAD_GRAYSCALE) # type: ignore
 
 #init rc4 key stream
 rc4=RC4(b'115')
@@ -88,6 +88,6 @@ for x in range(len_of_info):
 # print(image[0:100,0:100])
 image = Image.fromarray(image)
 image.show()
-image.save("611_emb.png")
+image.save("414_emb.png")
 
 
